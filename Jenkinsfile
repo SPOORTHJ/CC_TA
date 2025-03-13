@@ -1,37 +1,47 @@
 pipeline {
     agent any
+
     stages {
         stage('Clone repository') {
             steps {
                 checkout([$class: 'GitSCM',
                     branches: [[name: '*/main']],
-                    userRemoteConfigs: [[url:'https://github.com/SPOORTHJ/CC_TA.git']]])
+                    userRemoteConfigs: [[url: 'https://github.com/SPOORTHJ/CC_TA.git']]])
             }
         }
         
         stage('Build') {
             steps {
-                build 'PES1UG22CS606-1'
-                sh 'g++ ./main/hello1.cpp -o output'
+                sh 'g++ ./main/hello1.cpp -o ./main/output' // Ensure the file path is correct
             }
         }
 
         stage('Test') {
             steps {
-                sh './output'
+                script {
+                    try {
+                        sh './main/output' // Run the compiled program
+                    } catch (Exception e) {
+                        error 'Test stage failed! Check the output file path or compilation errors.'
+                    }
+                }
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'deploy'
+                echo 'Deploying application...'
             }
         }
     }
 
     post {
+        success {
+            echo 'Pipeline executed successfully!'
+        }
         failure {
-            error 'Pipeline failed'
+            echo 'Pipeline failed!'
+            error 'Check the logs for more details.'
         }
     }
 }
