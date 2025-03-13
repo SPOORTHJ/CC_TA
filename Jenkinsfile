@@ -12,7 +12,7 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'g++ ./main/hello1.cpp -o ./main/output' // Ensure the file path is correct
+                sh 'g++ ./main/hi.cpp -o ./main/output' // Ensure the file path is correct
             }
         }
 
